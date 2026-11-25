@@ -1,8 +1,5 @@
-
 const express = require('express');
-
 const app = express();
-
 const PORT = 4000;
 
 app.use(express.json());
@@ -30,7 +27,6 @@ let employees = [
     salary: 55000
   }
 ];
-
 let nextId = 4;
 
 app.get('/employees', (req, res) => {
@@ -43,8 +39,6 @@ app.get('/employees', (req, res) => {
 
 app.get('/employees/:id', (req, res) => {
   const empId = parseInt(req.params.id, 10);
-
-
   if (isNaN(empId)) {
     return res.status(400).json({
       success: false,
@@ -53,7 +47,6 @@ app.get('/employees/:id', (req, res) => {
   }
 
   const employee = employees.find(emp => emp.id === empId);
-
   if (!employee) {
     return res.status(404).json({
       success: false,
@@ -66,17 +59,15 @@ app.get('/employees/:id', (req, res) => {
     data: employee
   });
 });
+
 app.post('/employees', (req, res) => {
   const { name, employeeId, department, salary } = req.body;
-
-
   if (!name || !employeeId || !department || salary === undefined) {
     return res.status(400).json({
       success: false,
       message: 'Validation Error: Please provide name, employeeId, department, and salary.'
     });
   }
-
 
   const existingEmployee = employees.find(
     emp => emp.employeeId.toLowerCase() === employeeId.toString().toLowerCase()
@@ -88,7 +79,6 @@ app.post('/employees', (req, res) => {
     });
   }
 
-
   const newEmployee = {
     id: nextId++,
     name: name.trim(),
@@ -96,10 +86,7 @@ app.post('/employees', (req, res) => {
     department: department.trim(),
     salary: Number(salary)
   };
-
-
   employees.push(newEmployee);
-
 
   return res.status(201).json({
     success: true,
@@ -110,7 +97,6 @@ app.post('/employees', (req, res) => {
 
 app.put('/employees/:id', (req, res) => {
   const empId = parseInt(req.params.id, 10);
-
   if (isNaN(empId)) {
     return res.status(400).json({
       success: false,
@@ -118,10 +104,7 @@ app.put('/employees/:id', (req, res) => {
     });
   }
 
-
   const index = employees.findIndex(emp => emp.id === empId);
-
-
   if (index === -1) {
     return res.status(404).json({
       success: false,
@@ -130,7 +113,6 @@ app.put('/employees/:id', (req, res) => {
   }
 
   const { name, employeeId, department, salary } = req.body;
-
   if (employeeId) {
     const duplicate = employees.find(
       emp => emp.id !== empId && emp.employeeId.toLowerCase() === employeeId.toString().toLowerCase()
@@ -142,7 +124,6 @@ app.put('/employees/:id', (req, res) => {
       });
     }
   }
-
 
   const currentEmployee = employees[index];
   employees[index] = {
@@ -160,10 +141,8 @@ app.put('/employees/:id', (req, res) => {
   });
 });
 
-
 app.delete('/employees/:id', (req, res) => {
   const empId = parseInt(req.params.id, 10);
-
   if (isNaN(empId)) {
     return res.status(400).json({
       success: false,
@@ -172,7 +151,6 @@ app.delete('/employees/:id', (req, res) => {
   }
 
   const index = employees.findIndex(emp => emp.id === empId);
-
   if (index === -1) {
     return res.status(404).json({
       success: false,
@@ -180,17 +158,13 @@ app.delete('/employees/:id', (req, res) => {
     });
   }
 
-
   const deletedEmployee = employees.splice(index, 1)[0];
-
   return res.status(200).json({
     success: true,
     message: `Employee with ID ${empId} deleted successfully.`,
     data: deletedEmployee
   });
 });
-
-
 
 app.use((req, res) => {
   return res.status(404).json({

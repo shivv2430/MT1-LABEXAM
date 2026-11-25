@@ -1,4 +1,3 @@
-
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -30,18 +29,14 @@ let employees = [
 ];
 let nextId = 4;
 
-
 const server = http.createServer((req, res) => {
   const method = req.method;
   const url = req.url;
 
   console.log(`[${new Date().toLocaleTimeString()}] ${method} request received for ${url}`);
 
-
   if (method === 'GET' && url === '/') {
     const filePath = path.join(__dirname, 'index.html');
-
-
     fs.readFile(filePath, 'utf8', (err, content) => {
       if (err) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -54,11 +49,8 @@ const server = http.createServer((req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end(content);
     });
-  }
-
-  else if (method === 'GET' && url === '/about') {
+  } else if (method === 'GET' && url === '/about') {
     const filePath = path.join(__dirname, 'about.html');
-
     fs.readFile(filePath, 'utf8', (err, content) => {
       if (err) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -71,28 +63,23 @@ const server = http.createServer((req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end(content);
     });
-  }
-  else if (method === 'GET' && url === '/employees') {
+  } else if (method === 'GET' && url === '/employees') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       success: true,
       count: employees.length,
       data: employees
     }, null, 2));
-  }
-  else if (method === 'POST' && url === '/add-employee') {
+  } else if (method === 'POST' && url === '/add-employee') {
     let body = '';
-
     req.on('data', chunk => {
       body += chunk.toString();
     });
 
     req.on('end', () => {
       try {
-
         const parsedData = JSON.parse(body);
         const { name, employeeId, department, salary } = parsedData;
-
 
         if (!name || !employeeId || !department || salary === undefined) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -101,7 +88,6 @@ const server = http.createServer((req, res) => {
             message: 'Validation Error: Please provide name, employeeId, department, and salary.'
           }));
         }
-
 
         const existingEmployee = employees.find(
           emp => emp.employeeId.toLowerCase() === employeeId.toString().toLowerCase()
@@ -114,7 +100,6 @@ const server = http.createServer((req, res) => {
           }));
         }
 
-
         const newEmployee = {
           id: nextId++,
           name: name.trim(),
@@ -123,9 +108,7 @@ const server = http.createServer((req, res) => {
           salary: Number(salary)
         };
 
-
         employees.push(newEmployee);
-
 
         res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -133,9 +116,7 @@ const server = http.createServer((req, res) => {
           message: 'Employee added successfully',
           data: newEmployee
         }, null, 2));
-
       } catch (parseError) {
-
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: false,
@@ -143,10 +124,7 @@ const server = http.createServer((req, res) => {
         }));
       }
     });
-  }
-
-
-  else {
+  } else {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       success: false,
@@ -154,7 +132,6 @@ const server = http.createServer((req, res) => {
     }));
   }
 });
-
 
 server.listen(PORT, () => {
   console.log(`=======================================================`);
